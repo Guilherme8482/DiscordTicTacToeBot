@@ -1,9 +1,9 @@
-import { TicTacToy } from "./TicTacToy"
+import { TicTacToe } from "./TicTacToe"
 import { Client, TextChannel, Message, User } from 'discord.js'
 import { Board } from "./Board";
 import { range } from "lodash";
 
-export class TTTDiscord extends TicTacToy{
+export class TTTDiscord extends TicTacToe{
     public client = new Client()
     private channel?: TextChannel
     private firstPlayer?: User

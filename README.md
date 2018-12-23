@@ -1,4 +1,4 @@
-# Discord TicTacToy Bot
+# Discord TicTacToe Bot
 Simple way to create minigames within Discord text chat.
 
 To run, type on the terminal:

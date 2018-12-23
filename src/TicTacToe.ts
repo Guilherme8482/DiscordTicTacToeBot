@@ -11,7 +11,7 @@ async function getPlay(){
     return [1, 2, 5, 3, 9, 7][i++]
 }
 
-export class TicTacToy{
+export class TicTacToe{
     protected board: Board
 
     constructor(protected boardSize: number){

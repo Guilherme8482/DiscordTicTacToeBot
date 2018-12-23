@@ -1,4 +1,4 @@
-import { TTTDiscord } from "./TicTacToyDiscord";
+import { TTTDiscord } from "./TicTacToeDiscord";
 
 const d: {token: string, channelId: string} = require('../discord.config.json')
 
