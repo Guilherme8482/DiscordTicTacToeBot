@@ -1,6 +1,6 @@
 import { TicTacToe } from "./TicTacToe"
 import { Client, TextChannel, Message, User } from 'discord.js'
-import { Board } from "./Board";
+import { Board, X } from "./Board";
 import { range } from "lodash";
 
 export class TTTDiscord extends TicTacToe{
@@ -13,15 +13,16 @@ export class TTTDiscord extends TicTacToe{
         super(3)
     }
     async playForTwoPlayers(){
+        this.board = new Board(3)
         this.firstPlayer = await this.getPlayer()
         await this.print(`Okay, ${this.firstPlayer.username}, you're playing as X`)
         this.secondPlayer = await this.getPlayer()
         await this.print(`Okay, ${this.secondPlayer.username}, you're playing as O`)
-
+        const title = `${this.firstPlayer.username} vs ${this.secondPlayer.username}\n`
         this.board = new Board(this.boardSize)
         for(const i of range(this.boardSize ** 2)){
             await this.clear()
-            await this.print(this.board.toString())
+            await this.print(title + this.board.toString())
             let index 
             if(i % 2 === 0)
                 index = await this.askPosition(this.firstPlayer)
@@ -34,7 +35,20 @@ export class TTTDiscord extends TicTacToe{
         }
         await this.clear()
         await this.print(this.board.toString())
-        this.print(`Player ${this.board.getCurrentPlayer()} was win!`)
+        let winner
+        if(this.board.getCurrentPlayer() === X)
+            winner = this.firstPlayer.username
+        else
+            winner = this.secondPlayer.username
+        this.print(`Player ${winner} was win!`)
+        this.playAgain()
+    }
+    protected async playAgain(){
+        await this.print('If someone wants to play again, just say "again"')
+        await this.nextValidMessage(
+            msg => this.msgIsAllowed(msg) && msg.content.toLowerCase().match(/again/) !== null
+        )
+        this.playForTwoPlayers()
     }
     protected async askPosition(user?: User){
         let position: number
@@ -87,7 +101,7 @@ export class TTTDiscord extends TicTacToe{
     async getPlayer(){
         await this.print('Who wants to play TTT? If you want, just say "me"')
         const msg = await this.nextValidMessage(
-            msg => this.msgIsAllowed(msg) && !!msg.content.match(/me/)
+            msg => this.msgIsAllowed(msg) && msg.content.match(/me/) !== null
         )
         return msg.author
     }

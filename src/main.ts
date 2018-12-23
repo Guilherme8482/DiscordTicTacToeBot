@@ -4,5 +4,5 @@ const d: {token: string, channelId: string} = require('../discord.config.json')
 
 !async function main(){
     const b = await new TTTDiscord(d.token, d.channelId).init()
-    await b.playForTwoPlayers()
+    b.playForTwoPlayers()
 }()

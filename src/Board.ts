@@ -4,8 +4,8 @@ import { range } from 'lodash'
 const COL_SEPARATOR = ' | '
 const ROW_SEPARATOR = '---'
 const BREAK_LINE = '\n'
-const O = 'O'
-const X = 'X'
+export const O = 'O'
+export const X = 'X'
 
 export class Board{
     private board: string[][]
