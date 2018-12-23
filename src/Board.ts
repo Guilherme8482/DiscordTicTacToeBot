@@ -2,23 +2,38 @@ import { range } from 'lodash'
 
 
 const COL_SEPARATOR = ' | '
-const ROW_SEPARATOR = '---'
+const ROW_SEPARATOR = '------'
 const BREAK_LINE = '\n'
-export const O = 'O'
-export const X = 'X'
+
+export enum Marker{
+    X,
+    O,
+    BLANK
+}
+
 
 export class Board{
-    private board: string[][]
-    private currentPlayer = X
+    private board: Marker[][]
+    private currentPlayer = Marker.X
+    private emojis: string[] = []
 
     constructor(size: number){
         if(size < 3) throw new Error('new Board needs at least 3 size.')
         let i = 1
-        this.board = range(size).map(() => range(size).map(() => String(i++)))
+        this.board = range(size).map(() => range(size).map(() => Marker.BLANK))
+        this.emojis[Marker.X] = '🤣'
+        this.emojis[Marker.O] = '😍'
+    }
+    setEmojis({x, o}: {x?: string, o?: string}){
+        if(x) this.emojis[Marker.X] = x
+        if(o) this.emojis[Marker.O] = o
     }
     toString(){
         return this.board
-            .map(line => line.join(COL_SEPARATOR))
+            .map((line, i) => line
+                .map((m, j) => this.getEmoji(m) || `  ${String(3 * i + j + 1)}  `)
+                .join(COL_SEPARATOR)
+            )
             .join(BREAK_LINE + ROW_SEPARATOR.repeat(this.board.length) + BREAK_LINE)
     }
     indexToCoordenate(index: number){
@@ -34,10 +49,10 @@ export class Board{
     }
     positionIsFree(index: number){
         const [i, j] = this.indexToCoordenate(index)
-        return this.board[i][j] !== O && this.board[i][j] !== X
+        return this.board[i][j] !== Marker.O && this.board[i][j] !== Marker.X
     }
-    checkWinner(){        
-        const inverse = range(this.board.length).map(() => new Array<string>())
+    haveAWinner(){        
+        const inverse = range(this.board.length).map(() => new Array<Marker>())
         for(const i of range(this.board.length))
             for(const j of range(this.board.length))
                 inverse[i][j] = this.board[j][i]
@@ -52,19 +67,22 @@ export class Board{
                 return true
         return false
     }
-    private lineIsWinner(markers: string[]){
+    private lineIsWinner(markers: Marker[]){
         for(const marker of markers)
             if(marker !== this.currentPlayer)
                 return false
         return true
     }
     nextPlayer(){
-        if(this.currentPlayer === X)
-            return this.currentPlayer = O
+        if(this.currentPlayer === Marker.X)
+            return this.currentPlayer = Marker.O
         else
-            return this.currentPlayer = X
+            return this.currentPlayer = Marker.X
     }
     getCurrentPlayer(){
         return this.currentPlayer
+    }
+    getEmoji(marker: Marker){
+        return this.emojis[marker]
     }
 }

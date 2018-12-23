@@ -1,45 +1,41 @@
 import { TicTacToe } from "./TicTacToe"
-import { Client, TextChannel, Message, User } from 'discord.js'
-import { Board, X } from "./Board";
+import { Client, TextChannel, Message, User, Emoji } from 'discord.js'
+import { Board, Marker } from "./Board";
 import { range } from "lodash";
+
+const emojiFinder = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|[\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|[\ud83c[\ude32-\ude3a]|[\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g
 
 export class TTTDiscord extends TicTacToe{
     public client = new Client()
     private channel?: TextChannel
-    private firstPlayer?: User
-    private secondPlayer?: User
     
     constructor(readonly token: string, readonly channelId: string){
         super(3)
     }
     async playForTwoPlayers(){
         this.board = new Board(3)
-        this.firstPlayer = await this.getPlayer()
-        await this.print(`Okay, ${this.firstPlayer.username}, you're playing as X`)
-        this.secondPlayer = await this.getPlayer()
-        await this.print(`Okay, ${this.secondPlayer.username}, you're playing as O`)
-        const title = `${this.firstPlayer.username} vs ${this.secondPlayer.username}\n`
+        const player = {
+            X: await this.getPlayer(Marker.X),
+            O: await this.getPlayer(Marker.O)
+        }
+        this.board.setEmojis({x: player.X.emoji, o: player.O.emoji})
+        const title = `${player.X.user.username} vs ${player.O.user.username}\n`
         this.board = new Board(this.boardSize)
         for(const i of range(this.boardSize ** 2)){
+            const currentUser = i % 2 === 0 ? player.X : player.O
             await this.clear()
             await this.print(title + this.board.toString())
-            let index 
-            if(i % 2 === 0)
-                index = await this.askPosition(this.firstPlayer)
-            else            
-                index = await this.askPosition(this.secondPlayer)
+            const index = await this.askPosition(currentUser.user)
             this.board.makePlay(index - 1)
-            if(this.board.checkWinner())
+            if(this.board.haveAWinner())
                 break
             this.board.nextPlayer()
         }
         await this.clear()
-        await this.print(this.board.toString())
-        let winner
-        if(this.board.getCurrentPlayer() === X)
-            winner = this.firstPlayer.username
-        else
-            winner = this.secondPlayer.username
+        await this.print(title + this.board.toString())
+        const winner = this.board.getCurrentPlayer() === Marker.X
+            ? player.X.user
+            : player.O.user
         this.print(`Player ${winner} was win!`)
         this.playAgain()
     }
@@ -98,12 +94,14 @@ export class TTTDiscord extends TicTacToe{
         while(!condition(msg))
         return msg
     }
-    async getPlayer(){
+    async getPlayer(marker: Marker){
         await this.print('Who wants to play TTT? If you want, just say "me"')
         const msg = await this.nextValidMessage(
             msg => this.msgIsAllowed(msg) && msg.content.match(/me/) !== null
         )
-        return msg.author
+        const emoji = (msg.content.match(emojiFinder) || []).shift()
+        await this.print(`Okay, ${msg.author.username || ''}, you're playing as ${emoji || this.board.getEmoji(marker)}`)
+        return {user: msg.author, emoji}
     }
     async clear(){
         try{

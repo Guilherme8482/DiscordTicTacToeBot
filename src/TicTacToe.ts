@@ -2,15 +2,6 @@ import { Board } from "./Board"
 import { question } from 'readline-sync'
 import { range } from 'lodash'
 
-function timeout(t: number){return new Promise(r => setTimeout(r, t))}
-
-/**Test function */
-let i = 0
-async function getPlay(){
-    await timeout(500)
-    return [1, 2, 5, 3, 9, 7][i++]
-}
-
 export class TicTacToe{
     protected board: Board
 
@@ -26,28 +17,30 @@ export class TicTacToe{
                 ? await this.askPosition()
                 : 0 | Math.random() * this.boardSize ** 2
             this.board.makePlay(index - 1)
-            if(this.board.checkWinner())
+            if(this.board.haveAWinner())
                 break
             this.board.nextPlayer()
         }
         await this.clear()
         await this.print(this.board.toString())
-        this.print(`Player ${this.board.getCurrentPlayer()} was win!`)
+        const winner = this.board.getEmoji(this.board.getCurrentPlayer())
+        this.print(`Player ${winner} was win!`)
     }
     async playForTwoPlayers(){
         this.board = new Board(this.boardSize)
         for(const _ of range(this.boardSize ** 2)){
             await this.clear()
             await this.print(this.board.toString())
-            const index = /*await getPlay() //*/await this.askPosition()
+            const index = await this.askPosition()
             this.board.makePlay(index - 1)
-            if(this.board.checkWinner())
+            if(this.board.haveAWinner())
                 break
             this.board.nextPlayer()
         }
         await this.clear()
         await this.print(this.board.toString())
-        this.print(`Player ${this.board.getCurrentPlayer()} was win!`)
+        const winner = this.board.getEmoji(this.board.getCurrentPlayer())
+        this.print(`Player ${winner}  was win!`)
     }
     protected async askPosition(){
         let position: number
