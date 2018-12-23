@@ -15,7 +15,7 @@ export enum Marker{
 export class Board{
     private board: Marker[][]
     private currentPlayer = Marker.X
-    private emojis: string[] = []
+    public emojis: string[] = []
 
     constructor(size: number){
         if(size < 3) throw new Error('new Board needs at least 3 size.')
@@ -29,12 +29,13 @@ export class Board{
         if(o) this.emojis[Marker.O] = o
     }
     toString(){
-        return this.board
+        return '***' + this.board
             .map((line, i) => line
                 .map((m, j) => this.getEmoji(m) || `  ${String(3 * i + j + 1)}  `)
                 .join(COL_SEPARATOR)
             )
             .join(BREAK_LINE + ROW_SEPARATOR.repeat(this.board.length) + BREAK_LINE)
+            + '***'
     }
     indexToCoordenate(index: number){
         return [

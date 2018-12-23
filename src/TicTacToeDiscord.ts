@@ -20,9 +20,9 @@ export class TTTDiscord extends TicTacToe{
         }
         this.board.setEmojis({x: player.X.emoji, o: player.O.emoji})
         const title = `${player.X.user.username} vs ${player.O.user.username}\n`
-        this.board = new Board(this.boardSize)
+        let currentUser = player.X
         for(const i of range(this.boardSize ** 2)){
-            const currentUser = i % 2 === 0 ? player.X : player.O
+            currentUser = i % 2 === 0 ? player.X : player.O
             await this.clear()
             await this.print(title + this.board.toString())
             const index = await this.askPosition(currentUser.user)
@@ -33,10 +33,7 @@ export class TTTDiscord extends TicTacToe{
         }
         await this.clear()
         await this.print(title + this.board.toString())
-        const winner = this.board.getCurrentPlayer() === Marker.X
-            ? player.X.user
-            : player.O.user
-        this.print(`Player ${winner} was win!`)
+        this.print(`Player ${currentUser.user} was win!`)
         this.playAgain()
     }
     protected async playAgain(){
