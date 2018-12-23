@@ -1,5 +1,6 @@
 import { range } from 'lodash'
 
+
 const COL_SEPARATOR = ' | '
 const ROW_SEPARATOR = '---'
 const BREAK_LINE = '\n'
@@ -17,14 +18,8 @@ export class Board{
     }
     toString(){
         return this.board
-            .map(line => line
-                .map(m => m)
-                .join(COL_SEPARATOR)            
-            )
-            .join(BREAK_LINE + range(this.board.length)
-                .map(() => ROW_SEPARATOR)
-                .join('') + BREAK_LINE
-            )
+            .map(line => line.join(COL_SEPARATOR))
+            .join(BREAK_LINE + ROW_SEPARATOR.repeat(this.board.length) + BREAK_LINE)
     }
     indexToCoordenate(index: number){
         return [

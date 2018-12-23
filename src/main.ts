@@ -1,11 +1,8 @@
 import { TTTDiscord } from "./TicTacToyDiscord";
 
-const token = "NTI1NzcwNjg0NTA1NTIyMTg1.Dv7jiw.wksrcxZNz85lfSCLoFhey00mM5c"
-const channelId = '465958178891497474'
+const d: {token: string, channelId: string} = require('../discord.config.json')
 
 !async function main(){
-    const b = await new TTTDiscord(token, channelId).init()
-    b.playForTwoPlayers()
+    const b = await new TTTDiscord(d.token, d.channelId).init()
+    await b.playForTwoPlayers()
 }()
-
-

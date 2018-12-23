@@ -4,6 +4,7 @@ import { range } from 'lodash'
 
 function timeout(t: number){return new Promise(r => setTimeout(r, t))}
 
+/**Test function */
 let i = 0
 async function getPlay(){
     await timeout(500)
@@ -11,12 +12,27 @@ async function getPlay(){
 }
 
 export class TicTacToy{
-    private board: Board
+    protected board: Board
 
-    constructor(private boardSize: number){
+    constructor(protected boardSize: number){
         this.board = new Board(boardSize)
     }
     async playForOnePlayer(){
+        this.board = new Board(this.boardSize)
+        for(const i of range(this.boardSize ** 2)){            
+            await this.clear()
+            await this.print(this.board.toString())            
+            const index = (i % 2 === 0) 
+                ? await this.askPosition()
+                : 0 | Math.random() * this.boardSize ** 2
+            this.board.makePlay(index - 1)
+            if(this.board.checkWinner())
+                break
+            this.board.nextPlayer()
+        }
+        await this.clear()
+        await this.print(this.board.toString())
+        this.print(`Player ${this.board.getCurrentPlayer()} was win!`)
     }
     async playForTwoPlayers(){
         this.board = new Board(this.boardSize)
@@ -33,7 +49,7 @@ export class TicTacToy{
         await this.print(this.board.toString())
         this.print(`Player ${this.board.getCurrentPlayer()} was win!`)
     }
-    private async askPosition(){
+    protected async askPosition(){
         let position: number
         while(true){
             position = Number(await this.scan('Which position you want to mark? '))
