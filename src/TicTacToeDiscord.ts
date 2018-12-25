@@ -25,8 +25,8 @@ export class TTTDiscord extends TicTacToe{
             + '***' + this.board.toString() + '***'
     }
     async play(){
-        const X = await this.getNewPlayer(Marker.X)
-        const O = await this.getNewPlayer(Marker.O)
+        const X = await this.inviteNewPlayer(Marker.X)
+        const O = await this.inviteNewPlayer(Marker.O)
         this.player = {X: X.user, O: O.user}
         this.currentPlayer = this.player.X
         this.reset({
@@ -37,6 +37,13 @@ export class TTTDiscord extends TicTacToe{
         })
         await this.playForTwoPlayers()
         this.waitNextGame()
+    }
+    protected nextPlayer(){
+        this.board.nextPlayer()
+        if(this.player)
+            this.currentPlayer = this.currentPlayer === this.player.X 
+                ? this.player.O 
+                : this.player.X
     }
     protected async waitNextGame(){
         await this.console.print('If someone wants to play again, just say "again"')
@@ -53,7 +60,7 @@ export class TTTDiscord extends TicTacToe{
             msg => (!user) || (user && user.id === msg.author.id)
         )).content
     }
-    async getNewPlayer(marker: Marker){
+    async inviteNewPlayer(marker: Marker){
         await this.console.print('Who wants to play TTT? If you want, just say "me"')
         const msg = await this.console.nextValidMessage(
             msg => msg.content.match(/me/) !== null

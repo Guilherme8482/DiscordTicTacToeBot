@@ -24,10 +24,13 @@ export class TicTacToe{
                 await this.console.print(this.winnerToSring())
                 return
             }
-            this.board.nextPlayer()
+            this.nextPlayer()
         }
         await this.console.clear()
         await this.console.print(this.tiedToString())
+    }
+    protected nextPlayer(){
+        this.board.nextPlayer()        
     }
     protected async getPlayerMessage(question?: string){
         return await this.console.question(question)

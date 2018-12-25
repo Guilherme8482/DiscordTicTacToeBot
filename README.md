@@ -12,8 +12,10 @@ npm start
 You need a bot in your account to receive a token and then insert the token and channel id in the discord.config.json file in the root folder like:
 
 ```
-{
-    "token": "TOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKE",
-    "channelId": "999999999999999999"
-}
+[
+    {
+        "token": "TOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKENTOKE",
+        "channelId": "999999999999999999"
+    }
+]
 ```

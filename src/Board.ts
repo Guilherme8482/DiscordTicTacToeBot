@@ -11,7 +11,7 @@ export enum Marker{
     BLANK
 }
 export interface BoardOptions{
-    size: number
+    size?: number
     emojiX?: string
     emojiO?: string
     spacerSize?: number
@@ -23,8 +23,8 @@ export class Board{
     private spacerSize: number
 
     constructor({size, emojiX, emojiO, spacerSize}: BoardOptions){
-        if(size < 3) throw new Error('new Board needs at least 3 size.')
-        this.board = range(size).map(() => range(size).map(() => Marker.BLANK))
+        size = (!size || size < 3) ? 3 : size
+        this.board = range(size).map(() => range(size!).map(() => Marker.BLANK))
         this.emojis[Marker.X] = emojiX || '🤣'
         this.emojis[Marker.O] = emojiO || '😍'
         this.spacerSize = spacerSize  || 1
