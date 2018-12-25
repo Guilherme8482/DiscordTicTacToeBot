@@ -1,9 +1,9 @@
 import { range } from 'lodash'
 
-
 const COL_SEPARATOR = ' | '
-const ROW_SEPARATOR = '------'
+const ROW_SEPARATOR = '--'
 const BREAK_LINE = '\n'
+const SPACER = ' '
 
 export enum Marker{
     X,
@@ -11,31 +11,39 @@ export enum Marker{
     BLANK
 }
 
+export interface BoardOptions{
+    size: number
+    emojiX?: string
+    emojiO?: string
+    spacerSize?: number
+}
 
 export class Board{
     private board: Marker[][]
     private currentPlayer = Marker.X
     public emojis: string[] = []
+    private spacerSize: number
 
-    constructor(size: number){
+    constructor({size, emojiX, emojiO, spacerSize}: BoardOptions){
         if(size < 3) throw new Error('new Board needs at least 3 size.')
-        let i = 1
         this.board = range(size).map(() => range(size).map(() => Marker.BLANK))
-        this.emojis[Marker.X] = '🤣'
-        this.emojis[Marker.O] = '😍'
+        this.emojis[Marker.X] = emojiX || '🤣'
+        this.emojis[Marker.O] = emojiO || '😍'
+        this.spacerSize = spacerSize  || 1
     }
     setEmojis({x, o}: {x?: string, o?: string}){
         if(x) this.emojis[Marker.X] = x
         if(o) this.emojis[Marker.O] = o
     }
     toString(){
-        return '***' + this.board
+        const spacer = SPACER.repeat(this.spacerSize)
+        const separator = ROW_SEPARATOR.repeat(this.board.length * this.spacerSize)
+        return this.board
             .map((line, i) => line
-                .map((m, j) => this.getEmoji(m) || `  ${String(3 * i + j + 1)}  `)
+                .map((m, j) => this.getEmoji(m) || spacer + String(3 * i + j + 1) + spacer)
                 .join(COL_SEPARATOR)
             )
-            .join(BREAK_LINE + ROW_SEPARATOR.repeat(this.board.length) + BREAK_LINE)
-            + '***'
+            .join(BREAK_LINE + separator + BREAK_LINE)
     }
     indexToCoordenate(index: number){
         return [

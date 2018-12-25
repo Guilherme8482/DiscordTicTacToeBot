@@ -1,66 +1,47 @@
-import { Board } from "./Board"
-import { question } from 'readline-sync'
+import { Board, BoardOptions } from "./Board"
 import { range } from 'lodash'
+import { NodeConsole } from "./Console"
+import { question } from "readline-sync";
 
 export class TicTacToe{
-    protected board: Board
+    protected board!: Board
+    public console = new NodeConsole()
 
     constructor(protected boardSize: number){
-        this.board = new Board(boardSize)
+        this.reset()
     }
-    async playForOnePlayer(){
-        this.board = new Board(this.boardSize)
-        for(const i of range(this.boardSize ** 2)){            
-            await this.clear()
-            await this.print(this.board.toString())            
-            const index = (i % 2 === 0) 
-                ? await this.askPosition()
-                : 0 | Math.random() * this.boardSize ** 2
-            this.board.makePlay(index - 1)
-            if(this.board.haveAWinner())
-                break
-            this.board.nextPlayer()
-        }
-        await this.clear()
-        await this.print(this.board.toString())
-        const winner = this.board.getEmoji(this.board.getCurrentPlayer())
-        this.print(`Player ${winner} was win!`)
+    reset(bOptions?: BoardOptions){
+        this.board = new Board(bOptions || {size: this.boardSize})
+        return this
     }
-    async playForTwoPlayers(){
-        this.board = new Board(this.boardSize)
+    async playForTwoPlayers(){        
         for(const _ of range(this.boardSize ** 2)){
-            await this.clear()
-            await this.print(this.board.toString())
+            await this.console.clear()
+            await this.console.print(this.toString())
             const index = await this.askPosition()
             this.board.makePlay(index - 1)
             if(this.board.haveAWinner())
                 break
             this.board.nextPlayer()
         }
-        await this.clear()
-        await this.print(this.board.toString())
-        const winner = this.board.getEmoji(this.board.getCurrentPlayer())
-        this.print(`Player ${winner}  was win!`)
+        await this.console.clear()
+        await this.console.print(this.endGameToString())
     }
     protected async askPosition(){
-        let position: number
         while(true){
-            position = Number(await this.scan('Which position you want to mark? '))
+            const position = Number(await this.console.scan('Which position you want to mark? '))
             if( position >= 1 
                 && position <= this.boardSize ** 2 
                 && this.board.positionIsFree(position - 1))
-                break
-            await this.print('You cant mark in this, please say...')
+                return position
+            await this.console.print('You cant mark in this, please say...')
         }
-        return position
     }
-    async print(message: string){
-        console.log(message)
+    protected toString(){
+        return 'Tic Tac Toe\n' + this.board.toString()
     }
-    async scan(message?: string){
-        return question(message || '')
-    }
-    async clear(){
-        console.clear()
+    protected endGameToString(){
+        const winner = this.board.getEmoji(this.board.getCurrentPlayer())
+        return this.toString() + `\nPlayer ${winner}  was win!`
     }
 }

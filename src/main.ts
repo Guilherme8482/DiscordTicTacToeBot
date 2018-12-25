@@ -1,10 +1,13 @@
-import { TTTDiscord } from "./TicTacToeDiscord";
+import { TTTDiscord } from "./TicTacToeDiscord"
 
-const d: {token: string, channelId: string} = require('../discord.config.json')
+interface DiscordConfig{
+    token: string
+    channelId: string
+}
+
+const d = <DiscordConfig>require('../discord.config.json')
 
 !async function main(){
-    const b = await new TTTDiscord(d.token, d.channelId).init()
-    b.playForTwoPlayers()
+    const game = await new TTTDiscord(d.token, d.channelId).init()
+    game.play()
 }()
-
-// https://discordapp.com/oauth2/authorize?client_id=525770684505522185&scope=bot&permissions=8
