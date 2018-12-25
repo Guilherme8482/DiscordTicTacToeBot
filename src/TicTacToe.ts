@@ -19,12 +19,15 @@ export class TicTacToe{
             await this.console.print(this.toString())
             const index = await this.askPosition()
             this.board.makePlay(index - 1)
-            if(this.board.haveAWinner())
-                break
+            if(this.board.haveAWinner()){                
+                await this.console.clear()
+                await this.console.print(this.winnerToSring())
+                return
+            }
             this.board.nextPlayer()
         }
         await this.console.clear()
-        await this.console.print(this.endGameToString())
+        await this.console.print(this.tiedToString())
     }
     protected async getPlayerMessage(question?: string){
         return await this.console.question(question)
@@ -42,8 +45,11 @@ export class TicTacToe{
     protected toString(){
         return 'Tic Tac Toe\n' + this.board.toString()
     }
-    protected endGameToString(){
+    protected winnerToSring(){
         const winner = this.board.getEmoji(this.board.getCurrentPlayer())
         return this.toString() + `\nPlayer ${winner}  was win!`
+    }
+    protected tiedToString(){
+        return this.toString() + `\nUnfortunately no one w the game.`
     }
 }

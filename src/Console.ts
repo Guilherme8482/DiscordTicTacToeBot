@@ -1,6 +1,5 @@
-import { question } from "readline-sync";
-import { Client, TextChannel, Message } from "discord.js";
-
+import { question } from "readline-sync"
+import { Client, TextChannel, Message } from "discord.js"
 
 export class NodeConsole{
     async print(message: string){
@@ -13,13 +12,20 @@ export class NodeConsole{
         console.clear()
     }
 }
-
+export interface DiscordConfig{
+    token: string
+    channelId: string
+}
 export class DiscordConsole extends NodeConsole{
     private client = new Client()
     private channel?: TextChannel
+    readonly token: string
+    readonly channelId: string
 
-    constructor(readonly token: string, readonly channelId: string){
+    constructor({token, channelId}: DiscordConfig){
         super()
+        this.token = token
+        this.channelId = channelId
     }
     async init(){
         await this.client.login(this.token)
@@ -57,6 +63,6 @@ export class DiscordConsole extends NodeConsole{
             }
         }
         catch(e){
-        }        
+        }
     }
 }

@@ -10,14 +10,12 @@ export enum Marker{
     O,
     BLANK
 }
-
 export interface BoardOptions{
     size: number
     emojiX?: string
     emojiO?: string
     spacerSize?: number
 }
-
 export class Board{
     private board: Marker[][]
     private currentPlayer = Marker.X
