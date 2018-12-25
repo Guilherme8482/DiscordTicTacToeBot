@@ -1,11 +1,10 @@
 import { Board, BoardOptions } from "./Board"
 import { range } from 'lodash'
 import { NodeConsole } from "./Console"
-import { question } from "readline-sync";
 
 export class TicTacToe{
     protected board!: Board
-    public console = new NodeConsole()
+    protected console = new NodeConsole()
 
     constructor(protected boardSize: number){
         this.reset()
@@ -27,9 +26,12 @@ export class TicTacToe{
         await this.console.clear()
         await this.console.print(this.endGameToString())
     }
+    protected async getPlayerMessage(question?: string){
+        return await this.console.question(question)
+    }
     protected async askPosition(){
         while(true){
-            const position = Number(await this.console.scan('Which position you want to mark? '))
+            const position = Number(await this.getPlayerMessage('Which position you want to mark? '))
             if( position >= 1 
                 && position <= this.boardSize ** 2 
                 && this.board.positionIsFree(position - 1))

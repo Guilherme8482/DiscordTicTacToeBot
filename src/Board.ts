@@ -21,7 +21,7 @@ export interface BoardOptions{
 export class Board{
     private board: Marker[][]
     private currentPlayer = Marker.X
-    public emojis: string[] = []
+    private emojis: string[] = []
     private spacerSize: number
 
     constructor({size, emojiX, emojiO, spacerSize}: BoardOptions){
@@ -30,10 +30,6 @@ export class Board{
         this.emojis[Marker.X] = emojiX || '🤣'
         this.emojis[Marker.O] = emojiO || '😍'
         this.spacerSize = spacerSize  || 1
-    }
-    setEmojis({x, o}: {x?: string, o?: string}){
-        if(x) this.emojis[Marker.X] = x
-        if(o) this.emojis[Marker.O] = o
     }
     toString(){
         const spacer = SPACER.repeat(this.spacerSize)
@@ -54,22 +50,17 @@ export class Board{
     makePlay(index: number){
         const [i, j] = this.indexToCoordenate(index)
         this.board[i][j] = this.currentPlayer
-        return true
     }
     positionIsFree(index: number){
         const [i, j] = this.indexToCoordenate(index)
         return this.board[i][j] !== Marker.O && this.board[i][j] !== Marker.X
     }
-    haveAWinner(){        
-        const inverse = range(this.board.length).map(() => new Array<Marker>())
-        for(const i of range(this.board.length))
-            for(const j of range(this.board.length))
-                inverse[i][j] = this.board[j][i]
+    haveAWinner(){
         const target = [
-            ...inverse,                                 //vertical lines
-            ...this.board,                              //horizontal lines
-            this.board.map((_, i, a) => a[i][i]),       //main diagonal
-            this.board.map((_, i, a) => a[i][this.board.length - 1 - i])    //inverse diagonal
+            ...this.board,                                              //horizontal lines
+            ...this.board.map((l, i, a) => l.map((_, j) => a[j][i])),   //vertical lines
+            this.board.map((_, i, a) => a[i][i]),                       //main diagonal
+            this.board.map((_, i, a) => a[i][a.length - 1 - i])         //inverse diagonal
         ]
         for(const line of target)
             if(this.lineIsWinner(line))

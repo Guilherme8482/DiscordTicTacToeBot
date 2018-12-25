@@ -3,11 +3,10 @@ import { Client, TextChannel, Message } from "discord.js";
 
 
 export class NodeConsole{
-
     async print(message: string){
         console.log(message)
     }
-    async scan(message?: string){
+    async question(message?: string){
         return question(message || '')
     }
     async clear(){
@@ -45,7 +44,7 @@ export class DiscordConsole extends NodeConsole{
         if(this.channel)
             await this.channel.send(message)
     }
-    async scan(message?: string){
+    async question(message?: string){
         if(message)
             await this.print(message)
         return (await this.nextValidMessage(this.msgIsAllowed)).content
