@@ -4,7 +4,7 @@
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "node dist/main"
+    "start": "npx tsc & node dist/main"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +12,6 @@
   "dependencies": {
     "discord.js": "^11.4.2",
     "lodash": "^4.17.11",
-    "mathjs": "^5.4.0",
     "readline-sync": "^1.4.9"
   },
   "devDependencies": {
