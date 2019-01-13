@@ -19,7 +19,7 @@ export class TicTacToe{
             await this.console.print(this.toString())
             const index = await this.askPosition()
             this.board.makePlay(index - 1)
-            if(this.board.haveAWinner()){                
+            if(this.board.haveAWinner()){
                 await this.console.clear()
                 await this.console.print(this.winnerToSring())
                 return

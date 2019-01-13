@@ -47,13 +47,22 @@ export class DiscordConsole extends NodeConsole{
         }
     }
     async print(message: string){
-        if(this.channel)
-            await this.channel.send(message)
+        try{
+            if(this.channel)
+                await this.channel.send(message)
+        }
+        catch(error){
+        }
     }
     async question(message?: string){
-        if(message)
-            await this.print(message)
-        return (await this.nextValidMessage(this.msgIsAllowed)).content
+        try{
+            if(message)
+                await this.print(message)
+            return (await this.nextValidMessage(this.msgIsAllowed)).content
+        }
+        catch(error){
+            return ''
+        }
     }
     async clear(){
         try{
@@ -62,7 +71,7 @@ export class DiscordConsole extends NodeConsole{
                 await this.channel.bulkDelete(messages)
             }
         }
-        catch(e){
+        catch(error){
         }
     }
 }

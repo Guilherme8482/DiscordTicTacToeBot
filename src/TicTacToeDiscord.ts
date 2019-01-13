@@ -70,8 +70,9 @@ export class TTTDiscord extends TicTacToe{
         return {user: msg.author, emoji}
     }
     winnerToSring(){
-        const user = this.currentPlayer && this.currentPlayer.toString() 
-            || this.board.getEmoji(this.board.getCurrentPlayer())
+        const user = this.currentPlayer 
+            ? this.currentPlayer.toString() 
+            : this.board.getEmoji(this.board.getCurrentPlayer())
         return this.toString() + `\nPlayer ${user} was win!`
     }
 }
